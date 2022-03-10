@@ -12,13 +12,22 @@ function login($pseudoconnect, $passconnect) {
             $_SESSION["mail"] = $pseudoconnect;
             $_SESSION["motdepasse"] = $mdpBD;
             $_SESSION["role"] = $util["role"];
-        } 
+            
+            // journalisation de la connexion réussie
+            setConnexion($pseudoconnect);
+        }
+        else{
+            // journalisation de la connexion ratée
+            setTentative($pseudoconnect);
+        }
     }
     
 }
 
 function logout() {
     if (isLoggedOn()){
+        // maj date et heure de déconnexion
+        updateConnexion();
         session_unset();
     }
 }
