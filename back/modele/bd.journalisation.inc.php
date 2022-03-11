@@ -86,4 +86,25 @@ function verifierBanni($login, $adresseIP){
     
     return $resultat['nb'] > 0 ? true : false;
 }
+
+function setAccesDb($table, $action, $id, $email){
+    $resultat = false;
+    $dateHeureModif = date('Y-m-d H:i:s');
+    try{
+        $cnx = connexionPDO("logAccesDb");
+        $req = $cnx->prepare('INSERT INTO accesbdd (table_impactee, action_effectuee, id_concernee, login, dateHeureModif)
+                              VALUES (:table, :action, :id, :email, :dateHeureModif)');
+        $req->bindParam(':table', $table, PDO::PARAM_STR);
+        $req->bindParam(':action', $action, PDO::PARAM_STR);
+        $req->bindParam(':id', $id, PDO::PARAM_STR);
+        $req->bindParam(':email', $email, PDO::PARAM_STR);
+        $req->bindParam(':dateHeureModif', $dateHeureModif, PDO::PARAM_STR);
+        $resultat = $req->execute();
+    }
+    catch(PDOException $e){
+        print("Erreur ! :" . $e->getMessage());
+        die();
+    }
+    return $resultat;
+}
 ?>

@@ -31,7 +31,7 @@ function getHabilitationsByUser(string $idUser) : array {
 function getHabiliteByUserAndPage(int $idUser, int $idPage) : bool {
     $resultat = false;
     try {
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare("SELECT * FROM habilitation h WHERE idUtilisateur=:user AND idPage = :page AND (CURRENT_DATE BETWEEN dateDebut AND dateFin OR permanent = 1)");
         $req->bindValue(':user', $idUser, PDO::PARAM_INT);
         $req->bindValue(':page', $idPage, PDO::PARAM_INT);
@@ -47,7 +47,7 @@ function getHabiliteByUserAndPage(int $idUser, int $idPage) : bool {
 function getHabilitationsByUserAndPage(int $idUser, int $idPage) : array {
     $resultat = array();
     try {
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare("SELECT * FROM habilitation h WHERE idUtilisateur=:user AND idPage = :page");
         $req->bindValue(':user', $idUser, PDO::PARAM_INT);
         $req->bindValue(':page', $idPage, PDO::PARAM_INT);
@@ -88,7 +88,7 @@ function getEtatHabilitationsByUser(string $idUser) : array {
 function setHabilitation($idUser, $idPage, $dateDebut, $dateFin, $permanent) {
     $resultat = false;
     try {
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare('INSERT INTO habilitation (idUtilisateur, idPage, dateDebut, dateFin, permanent) VALUES (:user, :page, :dateD, :dateF, :permanent) ON DUPLICATE KEY UPDATE dateDebut= :dateD, dateFin= :dateF , permanent= :permanent ');
         $req->bindParam(':user', $idUser, PDO::PARAM_INT);
         $req->bindParam(':page', $idPage, PDO::PARAM_INT);
@@ -106,7 +106,7 @@ function setHabilitation($idUser, $idPage, $dateDebut, $dateFin, $permanent) {
 function updateHabilitation($idUser, $idPage, $dateDebut, $dateFin, $permanent) {
     $resultat = false;
     try {
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare('INSERT INTO habilitation (idUtilisateur, idPage, dateDebut, dateFin, permanent) VALUES (:user, :page, :dateD, :dateF, :permanent) ON DUPLICATE KEY UPDATE dateDebut= :dateD, dateFin= :dateF , permanent= :permanent');
         $req->bindParam(':user', $idUser, PDO::PARAM_INT);
         $req->bindParam(':page', $idPage, PDO::PARAM_INT);
@@ -124,7 +124,7 @@ function updateHabilitation($idUser, $idPage, $dateDebut, $dateFin, $permanent) 
 function supprHabilitation($idUser, $idPage) {
     $resultat = false;
     try {
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare('DELETE FROM habilitation WHERE idUtilisateur = :user AND idPage = :page');
 		$req->bindParam(':user', $idUser, PDO::PARAM_INT);
         $req->bindParam(':page', $idPage, PDO::PARAM_INT);

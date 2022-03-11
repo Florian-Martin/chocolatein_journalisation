@@ -39,13 +39,16 @@ function ajoutGamme($id, $libelle, $picto){
             mkdir($repertoireCible,0775);
         }
 
-
         $cnx = connexionPDO("");
         $req = $cnx->prepare('INSERT INTO gamme (id, libelle, picto) VALUES (:id, :libelle, :picto)');
         $req->bindParam(':id', $id, PDO::PARAM_STR);
         $req->bindParam(':libelle', $libelle, PDO::PARAM_STR);
         $req->bindParam(':picto', $picto, PDO::PARAM_STR);
         $resultat = $req->execute();
+        if ($resultat){
+            $idGamme = $cnx->lastInsertId();
+            setAccesDb("gamme", "insert", $idGamme, $_SESSION['mail']);
+        }
     } catch (PDOException $e) {
         print "Erreur !: " . $e->getMessage();
         die();
@@ -56,17 +59,16 @@ function ajoutGamme($id, $libelle, $picto){
 function editGamme($id, $libelle, $picto){
     $resultat = false;
     try {
-
-            // si le nom de la gamme change, modifier le nom du dossier des images
-
-
-
+        // si le nom de la gamme change, modifier le nom du dossier des images
         $cnx = connexionPDO("");
         $req = $cnx->prepare('UPDATE gamme SET libelle = :libelle, picto = :picto  WHERE id = :id');
         $req->bindParam(':id', $id, PDO::PARAM_STR);
         $req->bindParam(':libelle', $libelle, PDO::PARAM_STR);
         $req->bindParam(':picto', $picto, PDO::PARAM_STR);
         $resultat = $req->execute();
+        if ($resultat){
+            setAccesDb("gamme", "update", $id, $_SESSION['mail']);
+        }
     } catch (PDOException $e) {
         print "Erreur !: " . $e->getMessage();
         die();
@@ -77,11 +79,8 @@ function editGamme($id, $libelle, $picto){
 function supprGamme($id){
     $resultat = false;
     try {
-
         // !! quand on supprime une gamme, s'assurer qu'il n'y a pas de produits dans cette gamme !
         // !! par exemple compter le nb de produits de cette gamme et voir comment renvoyer un message pour expliquer
-
-
         // détruire le dossier de la gamme 
         $cheminImages = "./vues/images/produits/";
         $repertoireCible = $cheminImages.$id;
@@ -93,6 +92,9 @@ function supprGamme($id){
         $req = $cnx->prepare('DELETE FROM gamme WHERE id = :id ');
         $req->bindParam(':id', $id, PDO::PARAM_STR);
         $resultat = $req->execute();
+        if ($resultat){
+            setAccesDb("gamme", "delete", $id, $_SESSION['mail']);
+        }
     } catch (PDOException $e) {
         print "Erreur !: " . $e->getMessage();
         die();

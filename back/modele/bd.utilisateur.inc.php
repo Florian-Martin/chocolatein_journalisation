@@ -3,7 +3,7 @@
 function getUtilisateurs() {
     $resultat = array();
     try {
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare("select * from utilisateurs JOIN roles ON role = IDROLES ");
         $req->execute();
         $resultat = $req->fetchAll(PDO::FETCH_ASSOC);
@@ -18,7 +18,7 @@ function getUtilisateurs() {
 function getUtilisateurByMailU($mailU) {
     $resultat = array();
     try {
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare("select * from utilisateurs JOIN roles ON role = IDROLES where mail=:mail");
         $req->bindValue(':mail', $mailU, PDO::PARAM_STR);
         $req->execute();
@@ -52,7 +52,7 @@ function setUtilisateur($pseudo, $email, $role, $mdp, $dateActivation, $dateDesa
     $resultat = false;
     $passconnect = hash('sha256', $mdp);
     try {
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare('INSERT INTO utilisateurs (pseudo, mail, motdepasse, role, dateActivation, dateDesactivation, permanent) VALUES (:pseudo, :mail, :mdp, :role, :dateActivation, :dateDesactivation, :permanent)');
         $req->bindParam(':pseudo', $pseudo, PDO::PARAM_STR);
         $req->bindParam(':mail', $email, PDO::PARAM_STR);
@@ -64,6 +64,11 @@ function setUtilisateur($pseudo, $email, $role, $mdp, $dateActivation, $dateDesa
         $req->bindParam(':dateDesactivation', $dateDesactivation, PDO::PARAM_STR);
         $req->bindParam(':permanent', $permanent, PDO::PARAM_INT);
         $resultat = $req->execute();
+
+        if ($resultat){
+            $idUser = $cnx->lastInsertId();
+            setAccesDb("utilisateur", "insert", $idUser, $_SESSION['mail']);
+        }
 
         // ajout des habilitations par défaut selon le role choisi
         $userId = $cnx->lastInsertId(); 
@@ -81,7 +86,7 @@ function setUtilisateur($pseudo, $email, $role, $mdp, $dateActivation, $dateDesa
 function updateUtilisateur($pseudo, $email, $id, $dateActivation, $dateDesactivation, $permanent, $lesHabilitations) {
     $resultat = false;
     try {
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare('UPDATE utilisateurs SET pseudo = :pseudo, mail = :mail, dateActivation = :dateActivation, dateDesactivation = :dateDesactivation, permanent = :permanent WHERE IDUTILISATEURS = :id');
         $req->bindParam(':pseudo', $pseudo, PDO::PARAM_STR);
         $req->bindParam(':mail', $email, PDO::PARAM_STR); 
@@ -92,6 +97,10 @@ function updateUtilisateur($pseudo, $email, $id, $dateActivation, $dateDesactiva
         $req->bindParam(':dateDesactivation', $dateDesactivation, PDO::PARAM_STR);
         $req->bindParam(':permanent', $permanent, PDO::PARAM_INT);
         $resultat = $req->execute(); 
+
+        if ($resultat){
+            setAccesDb("utilisateur", "update", $id, $_SESSION['mail']);
+        }
 
         // modification des habilitations
         foreach ($lesHabilitations as $key=>$uneHabilitation){
@@ -112,10 +121,13 @@ function updateUtilisateur($pseudo, $email, $id, $dateActivation, $dateDesactiva
 function supprUtilisateur($id) {
     $resultat = false;
     try {
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare('DELETE FROM utilisateurs WHERE IDUTILISATEURS = :id ');
 		$req->bindParam(':id', $id, PDO::PARAM_INT);
         $resultat = $req->execute();
+        if ($resultat){
+            setAccesDb("utilisateur", "delete", $id, $_SESSION['mail']);
+        }
     } catch (PDOException $e) {
         print "Erreur !: " . $e->getMessage();
         die();

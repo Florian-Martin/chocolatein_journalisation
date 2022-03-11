@@ -63,6 +63,10 @@ function ajoutProduit($id, $nom, $description, $packaging, $idgamme, $nomFichier
         $req->bindParam(':urlimg', $urlimg, PDO::PARAM_STR);
         $req->bindParam(':idgamme', $idgamme, PDO::PARAM_STR);
         $resultat = $req->execute();
+        if ($resultat){
+            $idProduit = $cnx->lastInsertId();
+            setAccesDb("produit", "insert", $idProduit, $_SESSION['mail']);
+        }
     } catch (PDOException $e) {
         print "Erreur !: " . $e->getMessage();
         die();
@@ -81,8 +85,10 @@ function editProduit($id, $nom, $description, $packaging, $urlimg, $idgamme){
         $req->bindParam(':packaging', $packaging, PDO::PARAM_STR);
         $req->bindParam(':urlimg', $urlimg, PDO::PARAM_STR);
         $req->bindParam(':idgamme', $idgamme, PDO::PARAM_STR);
-
         $resultat = $req->execute();
+        if ($resultat){
+            setAccesDb("produit", "update", $id, $_SESSION['mail']);
+        }
     } catch (PDOException $e) {
         print "Erreur !: " . $e->getMessage();
         die();
@@ -97,8 +103,10 @@ function supprProduit($id, $urlImg){
         $cnx = connexionPDO("");
         $req = $cnx->prepare('DELETE FROM produit WHERE id = :id ');
         $req->bindParam(':id', $id, PDO::PARAM_STR);
-
         $resultat = $req->execute();
+        if ($resultat){
+            setAccesDb("produit", "delete", $id, $_SESSION['mail']);
+        }
     } catch (PDOException $e) {
         print "Erreur !: " . $e->getMessage();
         die();

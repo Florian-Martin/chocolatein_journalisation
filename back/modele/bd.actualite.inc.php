@@ -3,7 +3,7 @@
 function getActualites() {
     $resultat = array();
     try {
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare("select * from actualite");
         $req->execute();
         $resultat = $req->fetchAll(PDO::FETCH_ASSOC);
@@ -17,7 +17,7 @@ function getActualites() {
 function getUneActualite($id) {
     $resultat = array();
     try {
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare("select * from actualite where id = :id");
         $req->bindParam(':id', $id, PDO::PARAM_STR);
         $req->execute();
@@ -32,13 +32,17 @@ function getUneActualite($id) {
 function ajoutActualite($titre, $contenu, $datepublication, $actif){
     $resultat = false;
     try {
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare('INSERT INTO actualite (titre, contenu, datepublication, actif) VALUES (:titre, :contenu, :datepublication, :actif)');
         $req->bindParam(':titre', $titre, PDO::PARAM_STR);
         $req->bindParam(':contenu', $contenu, PDO::PARAM_STR);
         $req->bindParam(':datepublication', $datepublication, PDO::PARAM_STR);
         $req->bindParam(':actif', $actif, PDO::PARAM_INT);
         $resultat = $req->execute();
+        if ($resultat){
+            $idActu = $cnx->lastInsertId();
+            setAccesDb("actualite", "insert", $idActu, $_SESSION['mail']);
+        }
     } catch (PDOException $e) {
         print "Erreur !: " . $e->getMessage();
         die();
@@ -49,7 +53,7 @@ function ajoutActualite($titre, $contenu, $datepublication, $actif){
 function editActualite($id, $titre, $contenu, $datepublication, $actif){
     $resultat = false;
     try {
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare('UPDATE actualite SET titre = :titre, contenu = :contenu, datepublication = :datepublication, actif = :actif  WHERE id = :id');
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':titre', $titre, PDO::PARAM_STR);
@@ -57,6 +61,9 @@ function editActualite($id, $titre, $contenu, $datepublication, $actif){
         $req->bindParam(':datepublication', $datepublication, PDO::PARAM_STR);
         $req->bindParam(':actif', $actif, PDO::PARAM_INT);
         $resultat = $req->execute();
+        if ($resultat){
+            setAccesDb("actualite", "update", $id, $_SESSION['mail']);
+        }
     } catch (PDOException $e) {
         print "Erreur !: " . $e->getMessage();
         die();
@@ -67,10 +74,13 @@ function editActualite($id, $titre, $contenu, $datepublication, $actif){
 function supprActualite($id){
     $resultat = false;
     try {
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare('DELETE FROM actualite WHERE id = :id ');
         $req->bindParam(':id', $id, PDO::PARAM_INT);
         $resultat = $req->execute();
+        if ($resultat){
+            setAccesDb("actualite", "delete", $id, $_SESSION['mail']);
+        }
     } catch (PDOException $e) {
         print "Erreur !: " . $e->getMessage();
         die();
