@@ -3,7 +3,7 @@
 function getProduits() {
     $resultat = array();
     try {
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare("select * from produit");
         $req->execute();
         $resultat = $req->fetchAll(PDO::FETCH_ASSOC);
@@ -17,7 +17,7 @@ function getProduits() {
 function getProduitsByGame($idGamme) {
     $resultat = array();
     try {
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare("select * from produit WHERE idGamme = :idGamme");
         $req->bindParam(':idGamme', $idGamme, PDO::PARAM_STR);
         $req->execute();
@@ -32,7 +32,7 @@ function getProduitsByGame($idGamme) {
 function getUnProduit($id) {
     $resultat = array();
     try {
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare("select * from produit where id = :id");
         $req->bindParam(':id', $id, PDO::PARAM_STR);
         $req->execute();
@@ -54,7 +54,7 @@ function ajoutProduit($id, $nom, $description, $packaging, $idgamme, $nomFichier
         ajouterImageJpeg($repertoireCible, $nomFichierSansExt, $fichier);
         $urlimg = $cheminImages.$idgamme."/".$nomFichierSansExt;
 
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare('INSERT INTO produit (id, nom, description, packaging, urlimg, idgamme) VALUES (:id, :nom, :description, :packaging, :urlimg, :idgamme)');
         $req->bindParam(':id', $id, PDO::PARAM_STR);
         $req->bindParam(':nom', $nom, PDO::PARAM_STR);
@@ -73,7 +73,7 @@ function ajoutProduit($id, $nom, $description, $packaging, $idgamme, $nomFichier
 function editProduit($id, $nom, $description, $packaging, $urlimg, $idgamme){
     $resultat = false;
     try {
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare('UPDATE produit SET nom = :nom, description = :description, packaging = :packaging, urlimg = :urlimg, idgamme = :idgamme  WHERE id = :id');
         $req->bindParam(':id', $id, PDO::PARAM_STR);
         $req->bindParam(':nom', $nom, PDO::PARAM_STR);
@@ -94,7 +94,7 @@ function supprProduit($id, $urlImg){
     $resultat = false;
     try {
         supprimerImageJpeg($urlImg);
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare('DELETE FROM produit WHERE id = :id ');
         $req->bindParam(':id', $id, PDO::PARAM_STR);
 

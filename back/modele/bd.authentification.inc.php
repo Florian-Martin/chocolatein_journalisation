@@ -1,27 +1,31 @@
 <?php
 
 function login($pseudoconnect, $passconnect) {
-    $util = getUtilisateurActifByMailU($pseudoconnect);
-    if(isset($util["motdepasse"])){
-        $mdpBD =  $util["motdepasse"]; 
-        if($mdpBD == $passconnect){
-            if (!isset($_SESSION)) {
-                session_start();
+    if (!verifierBanni($pseudoconnect, $_SERVER['REMOTE_ADDR'])){
+        $util = getUtilisateurActifByMailU($pseudoconnect);
+        if(isset($util["motdepasse"])){
+            $mdpBD =  $util["motdepasse"]; 
+            if($mdpBD == $passconnect){
+                if (!isset($_SESSION)) {
+                    session_start();
+                }
+                // le mot de passe est celui de l'utilisateur dans la base de donnees
+                $_SESSION["mail"] = $pseudoconnect;
+                $_SESSION["motdepasse"] = $mdpBD;
+                $_SESSION["role"] = $util["role"];
+                
+                // journalisation de la connexion réussie
+                setConnexion($pseudoconnect);
             }
-            // le mot de passe est celui de l'utilisateur dans la base de donnees
-            $_SESSION["mail"] = $pseudoconnect;
-            $_SESSION["motdepasse"] = $mdpBD;
-            $_SESSION["role"] = $util["role"];
-            
-            // journalisation de la connexion réussie
-            setConnexion($pseudoconnect);
-        }
-        else{
-            // journalisation de la connexion ratée
-            setTentative($pseudoconnect);
+            else{
+                // journalisation de la connexion ratée
+                setTentative($pseudoconnect);
+            }
         }
     }
-    
+    else{
+        echo "<script>alert(\"Compte ou adresse IP bloqué(e) ! Veuillez réessayer plus tard.\")</script>";
+    }
 }
 
 function logout() {

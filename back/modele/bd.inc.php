@@ -1,12 +1,14 @@
 <?php
 
 function connexionPDO($mode) {
-    $login = "root";
-	$mdp = "";
     if ($mode == "logconnexion"){
+        $login = "userchoc";
+        $mdp = "p@ssCh0c";
         $bd = "bddchoclog";
     }
     else{
+        $login = "root";
+        $mdp = "";
         $bd = "bddchocsq3";
     }
 	$serveur = "127.0.0.1:3307";

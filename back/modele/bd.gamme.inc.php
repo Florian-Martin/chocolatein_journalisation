@@ -3,7 +3,7 @@
 function getGammes() {
     $resultat = array();
     try {
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare("select * from gamme");
         $req->execute();
         $resultat = $req->fetchAll(PDO::FETCH_ASSOC);
@@ -17,7 +17,7 @@ function getGammes() {
 function getUneGamme($id) {
     $resultat = array();
     try {
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare("select * from gamme where id = :id");
         $req->bindParam(':id', $id, PDO::PARAM_STR);
         $req->execute();
@@ -40,7 +40,7 @@ function ajoutGamme($id, $libelle, $picto){
         }
 
 
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare('INSERT INTO gamme (id, libelle, picto) VALUES (:id, :libelle, :picto)');
         $req->bindParam(':id', $id, PDO::PARAM_STR);
         $req->bindParam(':libelle', $libelle, PDO::PARAM_STR);
@@ -61,7 +61,7 @@ function editGamme($id, $libelle, $picto){
 
 
 
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare('UPDATE gamme SET libelle = :libelle, picto = :picto  WHERE id = :id');
         $req->bindParam(':id', $id, PDO::PARAM_STR);
         $req->bindParam(':libelle', $libelle, PDO::PARAM_STR);
@@ -89,7 +89,7 @@ function supprGamme($id){
         {
             rmdir($repertoireCible);
         }
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare('DELETE FROM gamme WHERE id = :id ');
         $req->bindParam(':id', $id, PDO::PARAM_STR);
         $resultat = $req->execute();

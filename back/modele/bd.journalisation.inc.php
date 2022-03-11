@@ -8,7 +8,7 @@ function setConnexion($email){
     try{
         $cnx = connexionPDO("logconnexion");
         $req = $cnx->prepare('INSERT INTO connexion (adresseIP, login, dateHeure)
-                              VALUES (:adresseIP, :login, :dateHeure');
+                              VALUES (:adresseIP, :login, :dateHeure)');
         $req->bindParam(':adresseIP', $adresseIP, PDO::PARAM_STR);
         $req->bindParam(':login', $email, PDO::PARAM_STR);
         $req->bindParam(':dateHeure', $dateHeureDebut, PDO::PARAM_STR);
@@ -66,5 +66,24 @@ function updateConnexion(){
         die();
     }
     return $resultat;
+}
+
+function verifierBanni($login, $adresseIP){
+    try{
+        $cnx = connexionPDO("logconnexion");
+        $req = $cnx->prepare('SELECT count(*) as nb from bannis 
+                              WHERE (login = :login or adresseIP = :adresseIP) 
+                              AND dateHeureFin > NOW()');
+        $req->bindParam(':login', $login, PDO::PARAM_STR);
+        $req->bindParam(':adresseIP', $adresseIP, PDO::PARAM_STR);
+        $req->execute();
+        $resultat = $req->fetch(PDO::FETCH_ASSOC);
+    }
+    catch (PDOException $e){
+        print("Erreur ! : " . $e->getMessage());
+        die();
+    }
+    
+    return $resultat['nb'] > 0 ? true : false;
 }
 ?>

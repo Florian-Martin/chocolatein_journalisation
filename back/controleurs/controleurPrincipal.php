@@ -54,6 +54,8 @@ function chargerModeles($racine){
     include_once("$racine/modele/bd.utilisateur.inc.php");
     include_once("$racine/modele/bd.habilitation.inc.php");
     include_once("$racine/modele/bd.page.inc.php");
+    include_once("$racine/modele/bd.journalisation.inc.php");
+
 }
 
 

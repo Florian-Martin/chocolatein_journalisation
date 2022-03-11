@@ -2,7 +2,7 @@
 
 class PdoChoc {
 
-    private static $serveur = 'mysql:host=127.0.0.1'; 
+    private static $serveur = 'mysql:host=127.0.0.1:3307'; 
     private static $bdd = 'dbname=bddchocsq3';
     private static $user = 'root';
     private static $mdp = '';

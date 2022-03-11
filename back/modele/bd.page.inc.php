@@ -9,7 +9,7 @@
  */
 function getPages(?string $private ) :array {
     $resultat = array();
-    $cnx = connexionPDO();
+    $cnx = connexionPDO("");
     try {
         if ($private != null){
             $req = $cnx->prepare("SELECT * FROM page WHERE pagePrivee = :private");

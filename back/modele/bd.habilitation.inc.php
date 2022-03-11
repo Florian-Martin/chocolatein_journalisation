@@ -9,7 +9,7 @@
 function getHabilitationsByUser(string $idUser) : array {
     $resultat = array();
     try {
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare("SELECT * FROM habilitation h JOIN page p ON h.idPage = p.id WHERE idUtilisateur=:id AND (CURRENT_DATE BETWEEN dateDebut AND dateFin OR permanent = 1)");
         $req->bindValue(':id', $idUser, PDO::PARAM_INT);
         $req->execute();

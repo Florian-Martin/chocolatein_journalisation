@@ -34,7 +34,7 @@ function getUtilisateurByMailU($mailU) {
 function getUtilisateurActifByMailU($mailU) {
     $resultat = array();
     try {
-        $cnx = connexionPDO();
+        $cnx = connexionPDO("");
         $req = $cnx->prepare("select * from utilisateurs JOIN roles ON role = IDROLES where mail=:mail AND (CURRENT_DATE BETWEEN dateActivation AND dateDesactivation OR permanent = 1)");
         $req->bindValue(':mail', $mailU, PDO::PARAM_STR);
         $req->execute();
