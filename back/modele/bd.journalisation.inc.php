@@ -71,7 +71,7 @@ function updateConnexion(){
 function verifierBanni($login, $adresseIP){
     try{
         $cnx = connexionPDO("logconnexion");
-        $req = $cnx->prepare('SELECT count(*) as nb from bannis 
+        $req = $cnx->prepare('SELECT count(*) as nb from comptebloque 
                               WHERE (login = :login or adresseIP = :adresseIP) 
                               AND dateHeureFin > NOW()');
         $req->bindParam(':login', $login, PDO::PARAM_STR);
